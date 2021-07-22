@@ -102,6 +102,42 @@ if __name__ == '__main__':
 
 ```
 
+```golang
+package main
+
+import (
+	"fmt"
+	"github.com/robfig/cron"
+	"os/exec"
+)
+
+func order() {
+
+	cmd := exec.Command("/usr/local/bin/meican")
+	output, err := cmd.Output()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(string(output))
+	}
+
+}
+
+func main() {
+	c := cron.New()
+	spec := "50 11 * * MON-FRI"
+	_, err := c.AddFunc(spec, func() {
+		go order()
+	})
+	if err != nil {
+		panic(err)
+	}
+	c.Start()
+
+	select {}
+}
+```
+
 ## 命令行调用
 
 ```bash
