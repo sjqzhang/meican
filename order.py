@@ -18,13 +18,31 @@ def initialize_meican():
     return mc
 
 
-def order_random(tab_keyword, keyword):
+def order_random(tab_keyword, expect_keyword,unexpect_keyword):
     try:
         dishes = get_tab_dishes(tab_keyword)
-        if keyword != "":
-            dishes2 = list(filter(lambda d: str(d.name).find(keyword) != -1, dishes))
-            if len(dishes2) > 0:
-                dishes = dishes2
+        dishes1=set()
+        dishes2=set()
+        if expect_keyword != "":
+            kws=expect_keyword.split('|')
+            for kw in kws:
+                if kw=='':
+                    continue
+                for dish in dishes:
+                    if kw in dish.name:
+                        dishes1.add(dish)
+        if unexpect_keyword != "":
+            kws=unexpect_keyword.split('|')
+            for kw in kws:
+                if kw=='':
+                    continue
+                for dish in dishes:
+                    if kw not in dish.name:
+                        dishes2.add(dish)
+                # dishes2 = list(filter(lambda d: str(d.name).find(kw) != -1, dishes))
+        dishes2=dishes1.intersection(dishes2)
+        if len(dishes2) > 0:
+            dishes = list(dishes2)
         rid = random.randint(0, len(dishes) - 1)
         mc.order(dishes[rid])
         print('done')
@@ -46,4 +64,4 @@ def get_tab_dishes(tab_keyword):
 if __name__ == '__main__':
     initialize_meican()
     # order_random('楼层关键字','套餐关键字')
-    order_random('26', '不辣')
+    order_random('26', '不辣','沙拉')
